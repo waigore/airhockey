@@ -6,16 +6,6 @@ Each open request should become a GitHub task or epic before build. Status `file
 
 ## Entries
 
-### physics-feel-live-tunables
-
-- **Purpose**: Prove puck/mallet collisions feel believable in Godot 2D, and that live parameter tweaks clearly change that feel.
-- **Scope**: In — one table, two mallets, puck, walls/goals; engine-style debug UI; live tunables that apply immediately in play: puck (mass, bounce, linear damp, max speed), mallet (mass, max speed, follow/drive strength, linear damp), walls (bounce). Gravity fixed at 0; physics tick not exposed unless debugging. Out — modes/scoring UI, full aesthetics pass, online, AI polish, per-side mallet values, spin/angular damp, goal suction.
-- **Desired outcome**: Go/no-go on default vs custom tuning; a short preferred parameter set for later design/view.
-- **Trigger**: user-requested (agent-proposed physics feel; user required live tunables)
-- **Related**: `specs/vision.md` (Physical feel); `specs/definition/definition.md` (Godot 2D physics); `docs/requirements/view.md`; `docs/requirements/design.md`
-- **Status**: filed
-- **Issue**: #3
-
 ### space-neon-aesthetics-on-physics
 
 - **Purpose**: Set vision-aligned space tone (faint stars, neon glow, readable minimalist) on top of the proven physics feel.
