@@ -51,7 +51,7 @@ Unchanged from `physics-feel-live-tunables`:
 | Constant / param | Value |
 |------------------|------:|
 | TABLE | Rect2(250, 8, 360, 704) |
-| WALL_THICKNESS | 24.0 |
+| WALL_THICKNESS | 12.0 (thinned vs PoC 1’s 24 for aesthetics; TABLE/GOAL unchanged) |
 | GOAL_WIDTH | 130.0 |
 | puck_mass | 0.35 |
 | puck_bounce | 1.0 |
@@ -88,6 +88,7 @@ Gravity 0; same collision setup. Aesthetics layers on top only.
 - Headless smoke: `godot --headless --path pocs/space-neon-aesthetics-on-physics --quit-after 180` (no script errors).
 - First pass too subtle; second too intense/diffuse (filled additive blobs + wide lines + heavy bloom). Tuned to tube neon: bright core Line2D + 2–3 rings with exponential alpha/width falloff; bloom uses fine levels only.
 - Glow z-order: keep glow z ≥ 0 and stack play pieces above `TableFill`.
+- Arena rails: wall thickness 12 (PO thinner sides); side rails own outer corners; neon uses one continuous outer frame path (no per-segment corner seams).
 - **Readable duel: holds** — focused neon at default intensity (~0.7); raise intensity for hotter core without growing a fog.
 
 ### Keep / adapt (aesthetics / view) — draft for reconcile
