@@ -86,4 +86,5 @@ godot --path pocs/physics-feel-live-tunables
 - No scoring UI; puck soft-resets if it leaves far past a goal.
 - Shared mallet tunables (not per-side).
 - No spin / angular damp / goal suction (out of scope).
+- High-speed wall hits can still lose some energy (solver + `puck linear damp`); mitigated with shape CCD, 120 Hz physics, non-overlapping wall segments.
 - Main tree must not import from `pocs/`.
