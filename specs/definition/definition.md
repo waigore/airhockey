@@ -6,52 +6,62 @@ Authoring rules: [`.agents/specs/rules/definition.md`](../../.agents/specs/rules
 
 ### In scope
 
-- <!-- fill in -->
+- Local 1P vs AI on desktop and mobile
+- Local 2P on desktop only
+- One space-themed table and look
+- Score-to-N matches with N in {7, 11, 21}
+- Rematch after a match ends
 
 ### Out of scope
 
-- <!-- fill in -->
+- Online play
+- Campaigns or meta progression
+- Power-ups
+- Customization beyond the one space/neon look
+- Timed matches
 
 ## Objectives
 
 ### Player objectives
 
-- **Goal**: <!-- fill in -->
-- **Win / lose conditions**: <!-- fill in -->
-- **Progression**: <!-- fill in -->
+- **Goal**: Score more goals than the opponent.
+- **Win / lose conditions**: First side to reach the chosen N (7, 11, or 21) wins; the other loses. No timed match.
+- **Progression**: None — rematch only.
 
 ### Product objectives
 
-- <!-- fill in -->
+- Ship a playable Godot build of the core duel on desktop and mobile.
+- Prove believable puck and mallet physics as the main hook of that build.
 
 ## Supported platforms
 
 | Platform | Primary input | Priority |
 |----------|---------------|----------|
-| <!-- fill in --> | <!-- fill in --> | <!-- fill in --> |
+| Desktop | Mouse or keyboard | primary |
+| Mobile | Touch (drag / flick) | primary |
 
 ## Engine
 
-- **Engine**: <!-- fill in --> — <!-- fill in -->
-- **Implications**: <!-- fill in -->
+- **Engine**: Godot — chosen for 2D physics and desktop/mobile export for this duel.
+- **Implications**: Play is 2D top-down; desktop and mobile are both reachable export targets.
 
 ## Constraints
 
 ### Design
 
-- <!-- fill in --> — <!-- fill in -->
+- Mobile offers 1P vs AI only; desktop may offer 1P vs AI or local 2P — matches platform input and session shape.
 
 ### Technical
 
-- <!-- fill in --> — <!-- fill in -->
+- Puck and mallet motion use Godot 2D physics — grounds the physical-feel quality.
 
 ### Market
 
-- <!-- fill in --> — <!-- fill in -->
+- None
 
 ## Spec depth
 
-- **Depth**: <!-- fill in --> — <!-- fill in -->
+- **Depth**: small — modest complete game with one core loop.
 
 ## Quality expectations
 
