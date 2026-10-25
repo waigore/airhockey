@@ -12,8 +12,8 @@ var puck_max_speed: float = 1400.0
 
 var mallet_mass: float = 2.0
 var mallet_max_speed: float = 900.0
-var mallet_drive: float = 4200.0
-var mallet_linear_damp: float = 8.0
+var mallet_drive: float = 3200.0 ## spring stiffness; controller adds critical damping
+var mallet_linear_damp: float = 6.0 ## extra follow damping (not engine linear_damp)
 
 var wall_bounce: float = 0.85
 
