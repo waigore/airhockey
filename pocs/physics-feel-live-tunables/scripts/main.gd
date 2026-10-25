@@ -2,9 +2,10 @@ extends Node2D
 
 ## PoC root: portrait table, goals top/bottom, P1 bottom, live tunables panel.
 
-const TABLE := Rect2(400, 40, 480, 640)
+# Portrait playfield ~2:1 length:width (standard air-hockey proportions).
+const TABLE := Rect2(250, 8, 360, 704)
 const WALL_THICKNESS := 24.0
-const GOAL_WIDTH := 160.0
+const GOAL_WIDTH := 130.0
 
 var tunables := PoCTunables.new()
 
