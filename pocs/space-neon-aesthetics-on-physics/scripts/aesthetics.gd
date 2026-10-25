@@ -60,6 +60,16 @@ func setup(
 	_mallet_top = mallet_top
 	_add_mat = CanvasItemMaterial.new()
 	_add_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	# Stack above the opaque table. Child z_index is relative — negative values
+	# become absolute z below TableFill and the glow vanishes under the arena.
+	if _table_fill != null:
+		_table_fill.z_index = 0
+	z_index = 2 ## table neon edges / center line
+	if _walls != null:
+		_walls.z_index = 4
+	for body in [_puck, _mallet_bottom, _mallet_top]:
+		if body != null:
+			body.z_index = 8
 	_ensure_table_lines()
 	_apply()
 	if not tunables.aesthetics_changed.is_connected(_apply):
@@ -189,26 +199,25 @@ func _tint_walls(neon: Color) -> void:
 			pts.append(v)
 		pts.append(poly_pts[0])
 
-		# Always a bright core rim.
-		var rim := Line2D.new()
-		rim.name = "NeonRim"
-		rim.width = 2.0 + intensity * 3.0
-		rim.default_color = Color(neon.r, neon.g, neon.b, 0.85)
-		rim.z_index = 1
-		rim.antialiased = true
-		rim.points = pts
-		body.add_child(rim)
-
-		# Soft additive outer glow (both approaches — bloom adds on top when enabled).
+		# Soft additive outer glow first (under rim); keep z >= 0 so it stays above TableFill.
 		var glow := Line2D.new()
 		glow.name = "NeonGlow"
 		glow.width = 10.0 + intensity * 28.0
 		glow.default_color = Color(neon.r, neon.g, neon.b, 0.2 + intensity * 0.55)
-		glow.z_index = 0
+		glow.z_index = 1
 		glow.antialiased = true
 		glow.material = _add_mat
 		glow.points = pts
 		body.add_child(glow)
+
+		var rim := Line2D.new()
+		rim.name = "NeonRim"
+		rim.width = 2.0 + intensity * 3.0
+		rim.default_color = Color(neon.r, neon.g, neon.b, 0.85)
+		rim.z_index = 2
+		rim.antialiased = true
+		rim.points = pts
+		body.add_child(rim)
 
 
 func _style_disk(body: RigidBody2D, color: Color, radius: float) -> void:
@@ -219,6 +228,7 @@ func _style_disk(body: RigidBody2D, color: Color, radius: float) -> void:
 		return
 	# Core stays readable; slight HDR lift for bloom.
 	vis.color = Color(color.r, color.g, color.b, 1.0)
+	vis.z_index = 10 ## above glow shells (never use negative z — sinks under TableFill)
 	var hub := vis.get_node_or_null("Hub") as Polygon2D
 	if hub != null:
 		hub.color = Color(color.r * 0.45, color.g * 0.45, color.b * 0.45, 1.0)
@@ -237,11 +247,12 @@ func _style_disk(body: RigidBody2D, color: Color, radius: float) -> void:
 	if not use_shells:
 		return
 
-	# Extra concentric additive shells for the Halo approach.
+	# Extra concentric additive shells for the Halo approach (z 1..5 under Visual@10).
 	var layers := 5
 	for i in layers:
 		var halo := Polygon2D.new()
 		halo.name = "Halo%d" % i
+		# Outer layers first (lower z); i=0 closest to disk.
 		var scale := 1.2 + float(i) * (0.45 + intensity * 0.4)
 		var pts := PackedVector2Array()
 		var n := 36
@@ -251,10 +262,9 @@ func _style_disk(body: RigidBody2D, color: Color, radius: float) -> void:
 		halo.polygon = pts
 		var alpha := (0.55 - float(i) * 0.08) * (0.45 + intensity * 0.7)
 		halo.color = Color(color.r, color.g, color.b, clampf(alpha, 0.08, 0.85))
-		halo.z_index = -1 - i
+		halo.z_index = 5 - i ## outer = lower z, still >= 0
 		halo.material = _add_mat
 		body.add_child(halo)
-		body.move_child(halo, 0)
 
 
 func _add_aura(body: RigidBody2D, color: Color, radius: float, intensity: float) -> void:
@@ -267,17 +277,16 @@ func _add_aura(body: RigidBody2D, color: Color, radius: float, intensity: float)
 		pts.append(Vector2(cos(a), sin(a)) * radius * scale)
 	aura.polygon = pts
 	aura.color = Color(color.r, color.g, color.b, 0.2 + intensity * 0.45)
-	aura.z_index = -1
+	aura.z_index = 1 ## above TableFill via parent z; under Visual
 	aura.material = _add_mat
 	body.add_child(aura)
-	body.move_child(aura, 0)
 
 	# Tight bright ring just outside the disk.
 	var ring := Line2D.new()
 	ring.name = "AuraRing"
 	ring.width = 2.0 + intensity * 4.0
 	ring.default_color = Color(color.r, color.g, color.b, 0.7 + intensity * 0.3)
-	ring.z_index = 1
+	ring.z_index = 11
 	ring.antialiased = true
 	ring.material = _add_mat
 	var rpts := PackedVector2Array()
