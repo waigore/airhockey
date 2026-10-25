@@ -13,8 +13,8 @@ Each open request should become a GitHub task or epic before build. Status `file
 - **Desired outcome**: Go/no-go on default vs custom tuning; a short preferred parameter set for later design/view.
 - **Trigger**: user-requested (agent-proposed physics feel; user required live tunables)
 - **Related**: `specs/vision.md` (Physical feel); `specs/definition/definition.md` (Godot 2D physics); `docs/requirements/view.md`; `docs/requirements/design.md`
-- **Status**: open
-- **Issue**: none
+- **Status**: filed
+- **Issue**: #3
 
 ### space-neon-aesthetics-on-physics
 
@@ -23,5 +23,5 @@ Each open request should become a GitHub task or epic before build. Status `file
 - **Desired outcome**: Keep/adapt list for aesthetics/view; confirm readable duel under neon/space look.
 - **Trigger**: user-requested
 - **Related**: `specs/vision.md`; `docs/requirements/aesthetics.md`; `docs/requirements/view.md`; depends on `physics-feel-live-tunables`
-- **Status**: open
-- **Issue**: none
+- **Status**: filed
+- **Issue**: #4
