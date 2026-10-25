@@ -43,7 +43,7 @@ func _build_ui() -> void:
 
 	_add_slider(vbox, "mallet_mass", "Mallet mass", 0.2, 8.0, 0.05)
 	_add_slider(vbox, "mallet_max_speed", "Mallet max speed", 100.0, 2000.0, 10.0)
-	_add_slider(vbox, "mallet_drive", "Mallet drive", 500.0, 12000.0, 50.0)
+	_add_slider(vbox, "mallet_drive", "Mallet drive", 500.0, 16000.0, 50.0)
 	_add_slider(vbox, "mallet_linear_damp", "Mallet linear damp", 0.0, 20.0, 0.1)
 
 	_add_slider(vbox, "wall_bounce", "Wall bounce", 0.0, 1.0, 0.01)
