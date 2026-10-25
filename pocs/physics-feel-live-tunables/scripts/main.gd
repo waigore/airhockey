@@ -5,8 +5,6 @@ extends Node2D
 const TABLE := Rect2(160, 80, 960, 560)
 const WALL_THICKNESS := 24.0
 const GOAL_WIDTH := 160.0
-const PUCK_RADIUS := 18.0
-const MALLET_RADIUS := 36.0
 
 var tunables := PoCTunables.new()
 
@@ -25,6 +23,14 @@ func _ready() -> void:
 		p, p + Vector2(s.x, 0), p + s, p + Vector2(0, s.y)
 	])
 	table_fill.color = Color(0.08, 0.12, 0.18, 1.0)
+
+	# Configure sides in code so scene export drift cannot stack two left/blue mallets.
+	mallet_left.control_mode = 0 ## MOUSE
+	mallet_left.play_half = "left"
+	mallet_left.tint = Color(0.3, 0.75, 1.0, 1.0)
+	mallet_right.control_mode = 1 ## KEYS
+	mallet_right.play_half = "right"
+	mallet_right.tint = Color(1.0, 0.45, 0.35, 1.0)
 
 	walls.setup(tunables, TABLE, WALL_THICKNESS, GOAL_WIDTH)
 	puck.setup(tunables)

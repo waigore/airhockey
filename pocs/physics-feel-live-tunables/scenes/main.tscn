@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://pocphysicsfeelmain"]
+[gd_scene load_steps=9 format=3 uid="uid://pocphysicsfeelmain"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/walls.gd" id="2_walls"]
@@ -9,7 +9,10 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_puck"]
 radius = 18.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_mallet"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_l"]
+radius = 36.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_r"]
 radius = 36.0
 
 [node name="Main" type="Node2D"]
@@ -41,9 +44,10 @@ lock_rotation = true
 script = ExtResource("4_mallet")
 control_mode = 0
 play_half = "left"
+tint = Color(0.3, 0.75, 1, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MalletLeft"]
-shape = SubResource("CircleShape2D_mallet")
+shape = SubResource("CircleShape2D_mallet_l")
 
 [node name="MalletRight" type="RigidBody2D" parent="."]
 collision_layer = 4
@@ -54,9 +58,10 @@ lock_rotation = true
 script = ExtResource("4_mallet")
 control_mode = 1
 play_half = "right"
+tint = Color(1, 0.45, 0.35, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MalletRight"]
-shape = SubResource("CircleShape2D_mallet")
+shape = SubResource("CircleShape2D_mallet_r")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
