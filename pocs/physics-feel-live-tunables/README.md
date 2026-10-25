@@ -49,14 +49,14 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 | Param | Value |
 |-------|------:|
 | puck_mass | 0.35 |
-| puck_bounce | 0.92 |
+| puck_bounce | 1.0 |
 | puck_linear_damp | 0.15 |
-| puck_max_speed | 1400 |
+| puck_max_speed | 2290 |
 | mallet_mass | 1.55 |
 | mallet_max_speed | 1440 |
 | mallet_drive | 10300 |
 | mallet_linear_damp | 16.8 |
-| wall_bounce | 0.85 |
+| wall_bounce | 1.0 |
 
 ## Promotion act
 
