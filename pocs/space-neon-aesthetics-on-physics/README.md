@@ -86,7 +86,9 @@ Gravity 0; same collision setup. Aesthetics layers on top only.
 - Copied PoC 1 scene/scripts; locked arena constants and preferred physics defaults.
 - Added deep space ColorRect + two starfield implementations and two glow implementations with a left-side aesthetics panel.
 - Headless smoke: `godot --headless --path pocs/space-neon-aesthetics-on-physics --quit-after 180` (no script errors).
-- First pass was too subtle (low-alpha non-additive shells; bloom without `hdr_2d`). Strengthened: additive aura always on, HDR neon colors, brighter wall/table glow lines, default intensity 0.9. **Readable duel: holds** if intensity stays mid–high; crank bloom to 1.0 only if you want a wash.
+- First pass was too subtle (low-alpha non-additive shells; bloom without `hdr_2d`). Strengthened: additive aura always on, HDR neon colors, brighter wall/table glow lines, default intensity 0.9.
+- Glow z-order bug: child `z_index < 0` is absolute under opaque `TableFill`, so auras drew in the margins behind the arena. Fixed by keeping glow z ≥ 0 and stacking puck/mallet/walls above the table.
+- **Readable duel: holds** if intensity stays mid–high; crank bloom to 1.0 only if you want a wash.
 
 ### Keep / adapt (aesthetics / view) — draft for reconcile
 
