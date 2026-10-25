@@ -5,7 +5,7 @@ Agent entrypoint for this repo. Keep this file short; put detail in `docs/`, `sp
 ## Project
 
 - **Purpose**: <!-- fill in: what this game/project is -->
-- **Language / engine**: <!-- fill in from specs/definition/definition.md (Engine) and its Engine ADR: e.g. GDScript/Godot, C#/Unity, Dart/Flame -->
+- **Language / engine**: GDScript / Godot 4.7.x (ADR-0001)
 - **Frameworks / tools**: <!-- fill in: key libs, build tooling, CI -->
 
 ## Quick start commands
