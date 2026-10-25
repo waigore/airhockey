@@ -26,10 +26,10 @@ var star_density: float = 0.55 ## 0..1
 var star_brightness: float = 0.35 ## 0..1 faint by default
 var star_twinkle: float = 0.6 ## used by particles approach
 
-## 0 = halo shells (layered Polygon2D), 1 = WorldEnvironment bloom
+## 0 = halo shells (layered additive Polygon2D), 1 = WorldEnvironment bloom (needs hdr_2d)
 var glow_approach: int = 0
-var glow_intensity: float = 0.7 ## 0..1
-var neon_saturation: float = 0.85 ## 0..1
+var glow_intensity: float = 0.9 ## 0..1 — default high so neon reads in play
+var neon_saturation: float = 1.0 ## 0..1
 
 
 func notify_changed() -> void:
