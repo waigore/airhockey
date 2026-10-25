@@ -52,10 +52,10 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 | puck_bounce | 0.92 |
 | puck_linear_damp | 0.15 |
 | puck_max_speed | 1400 |
-| mallet_mass | 2.0 |
-| mallet_max_speed | 900 |
-| mallet_drive | 3200 |
-| mallet_linear_damp | 6.0 |
+| mallet_mass | 1.55 |
+| mallet_max_speed | 1440 |
+| mallet_drive | 10300 |
+| mallet_linear_damp | 16.8 |
 | wall_bounce | 0.85 |
 
 ## Promotion act
