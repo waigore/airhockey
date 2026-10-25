@@ -1,6 +1,7 @@
 extends Node2D
 
 ## Static table walls with live bounce. Goal gaps on the short (left/right) ends.
+## Segments are non-overlapping so a corner hit is one contact (not two that cancel speed).
 
 var tunables: PoCTunables
 var _bodies: Array[StaticBody2D] = []
@@ -13,7 +14,8 @@ func setup(t: PoCTunables, table: Rect2, wall_thickness: float, goal_width: floa
 	_bodies.clear()
 	_build(table, wall_thickness, goal_width)
 	_apply()
-	tunables.changed.connect(_apply)
+	if not tunables.changed.is_connected(_apply):
+		tunables.changed.connect(_apply)
 
 
 func _build(table: Rect2, th: float, goal_w: float) -> void:
@@ -23,16 +25,15 @@ func _build(table: Rect2, th: float, goal_w: float) -> void:
 	var h := table.size.y
 	var mid_y := y0 + h * 0.5
 	var half_goal := goal_w * 0.5
-	# Top and bottom full rails
-	_add_rect(Vector2(x0 + w * 0.5, y0 - th * 0.5), Vector2(w + th * 2.0, th))
-	_add_rect(Vector2(x0 + w * 0.5, y0 + h + th * 0.5), Vector2(w + th * 2.0, th))
-	# Left end: two segments around goal
-	var left_seg_h := (h - goal_w) * 0.5
-	_add_rect(Vector2(x0 - th * 0.5, mid_y - half_goal - left_seg_h * 0.5), Vector2(th, left_seg_h))
-	_add_rect(Vector2(x0 - th * 0.5, mid_y + half_goal + left_seg_h * 0.5), Vector2(th, left_seg_h))
-	# Right end
-	_add_rect(Vector2(x0 + w + th * 0.5, mid_y - half_goal - left_seg_h * 0.5), Vector2(th, left_seg_h))
-	_add_rect(Vector2(x0 + w + th * 0.5, mid_y + half_goal + left_seg_h * 0.5), Vector2(th, left_seg_h))
+	# Top/bottom: table width only (do not overlap side rails).
+	_add_rect(Vector2(x0 + w * 0.5, y0 - th * 0.5), Vector2(w, th))
+	_add_rect(Vector2(x0 + w * 0.5, y0 + h + th * 0.5), Vector2(w, th))
+	# Left/right: two segments around the goal, flush with the table y-range.
+	var seg_h := (h - goal_w) * 0.5
+	_add_rect(Vector2(x0 - th * 0.5, mid_y - half_goal - seg_h * 0.5), Vector2(th, seg_h))
+	_add_rect(Vector2(x0 - th * 0.5, mid_y + half_goal + seg_h * 0.5), Vector2(th, seg_h))
+	_add_rect(Vector2(x0 + w + th * 0.5, mid_y - half_goal - seg_h * 0.5), Vector2(th, seg_h))
+	_add_rect(Vector2(x0 + w + th * 0.5, mid_y + half_goal + seg_h * 0.5), Vector2(th, seg_h))
 
 
 func _add_rect(center: Vector2, size: Vector2) -> void:
@@ -61,5 +62,6 @@ func _apply() -> void:
 	var mat := PhysicsMaterial.new()
 	mat.bounce = tunables.wall_bounce
 	mat.friction = 0.0
+	mat.absorbent = false
 	for b in _bodies:
 		b.physics_material_override = mat
