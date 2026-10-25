@@ -39,6 +39,7 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 
 - RigidBody2D puck + mallets, StaticBody2D walls with goal gaps, project gravity 0.
 - Live debug panel applies mass/bounce/damp/max-speed (puck), mass/max-speed/drive/damp (mallet), wall bounce immediately via `PhysicsMaterial` + forces.
+- Mallet follow uses a critically damped spring + target smoothing + settle deadzone (avoids undamped force jitter).
 - Headless smoke: `godot --headless --path . --quit-after 180` (no script errors). Interactive: collisions read clearly; raising puck bounce / lowering damp makes the table livelier; drive strength changes mallet snap.
 
 **Verdict: go** — custom tuning is clearly needed; engine defaults alone are too floaty or dead. Preferred set below is a solid starting point for later design/view.
@@ -53,8 +54,8 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 | puck_max_speed | 1400 |
 | mallet_mass | 2.0 |
 | mallet_max_speed | 900 |
-| mallet_drive | 4200 |
-| mallet_linear_damp | 8.0 |
+| mallet_drive | 3200 |
+| mallet_linear_damp | 6.0 |
 | wall_bounce | 0.85 |
 
 ## Promotion act

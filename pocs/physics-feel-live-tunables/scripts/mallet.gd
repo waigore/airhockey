@@ -1,14 +1,18 @@
 extends RigidBody2D
 
-## Mallet: follows a target (mouse or keyboard aim) with tunable drive strength.
+## Mallet: critically damped follow toward mouse/keys (avoids spring jitter).
 
 enum ControlMode { MOUSE, KEYS }
+
+const SETTLE_PX := 2.5
+const TARGET_SMOOTH := 28.0 ## higher = snappier cursor tracking, still filtered
 
 @export var control_mode: ControlMode = ControlMode.MOUSE
 @export var play_half: String = "left" ## "left" or "right" — clamps target to that half
 
 var tunables: PoCTunables
 var _key_target: Vector2 = Vector2.ZERO
+var _follow_target: Vector2 = Vector2.ZERO
 var _table_rect: Rect2 = Rect2()
 
 
@@ -16,9 +20,13 @@ func setup(t: PoCTunables, table: Rect2) -> void:
 	tunables = t
 	_table_rect = table
 	_key_target = global_position
+	_follow_target = global_position
 	gravity_scale = 0.0
 	lock_rotation = true
 	continuous_cd = RigidBody2D.CCD_MODE_CAST_RAY
+	# Follow damping is applied in the controller; keep engine damp low so it
+	# does not fight the critically damped spring.
+	linear_damp_mode = RigidBody2D.DAMP_MODE_REPLACE
 	var color := Color(0.3, 0.75, 1.0, 1.0) if play_half == "left" else Color(1.0, 0.45, 0.35, 1.0)
 	_ensure_visual(color, 36.0)
 	_apply()
@@ -51,27 +59,43 @@ func _apply() -> void:
 	if tunables == null:
 		return
 	mass = tunables.mallet_mass
-	linear_damp = tunables.mallet_linear_damp
+	# Engine linear damp kept near-zero; tunable damp feeds the controller.
+	linear_damp = 0.0
 	var mat := PhysicsMaterial.new()
-	mat.bounce = 0.2
-	mat.friction = 0.05
+	mat.bounce = 0.15
+	mat.friction = 0.02
 	physics_material_override = mat
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if tunables == null:
 		return
-	var target := _resolve_target()
-	var to_t := target - global_position
-	var drive := tunables.mallet_drive
-	apply_central_force(to_t * drive)
-	var v := linear_velocity
+	var raw := _resolve_raw_target()
+	var a := 1.0 - exp(-TARGET_SMOOTH * delta)
+	_follow_target = _follow_target.lerp(raw, a)
+
+
+func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
+	if tunables == null:
+		return
+	var to_t := _follow_target - state.transform.origin
+	var dist := to_t.length()
+	var k := tunables.mallet_drive
+	# Critical damping for spring-mass: c = 2*sqrt(k*m), plus tunable extra.
+	var c := 2.0 * sqrt(maxf(k * mass, 0.0001)) + tunables.mallet_linear_damp * 40.0
+	if dist < SETTLE_PX:
+		# Brake only — kills orbit/jitter when the cursor is on the mallet.
+		state.linear_velocity = state.linear_velocity.move_toward(Vector2.ZERO, c * state.step / maxf(mass, 0.001))
+		return
+	var force := to_t * k - state.linear_velocity * c
+	state.apply_central_force(force)
+	var v := state.linear_velocity
 	var max_s := tunables.mallet_max_speed
 	if v.length() > max_s:
-		linear_velocity = v.normalized() * max_s
+		state.linear_velocity = v.normalized() * max_s
 
 
-func _resolve_target() -> Vector2:
+func _resolve_raw_target() -> Vector2:
 	var raw: Vector2
 	if control_mode == ControlMode.MOUSE:
 		raw = get_global_mouse_position()
@@ -100,6 +124,7 @@ func snap_to(pos: Vector2) -> void:
 	global_position = pos
 	linear_velocity = Vector2.ZERO
 	_key_target = pos
+	_follow_target = pos
 
 
 func _clamp_to_half(p: Vector2) -> Vector2:
