@@ -26,9 +26,9 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 | Faint starfield (selectable) | Static `_draw()` dots **or** CPUParticles2D twinkle |
 | Neon arena / walls | Polygon2D fills + Line2D neon edge / wall rims |
 | Neon puck & mallets | Polygon2D disks + selectable glow treatment |
-| Glow A — Halo shells | Additive Polygon2D shells + soft aura/rings on puck/mallets/walls |
-| Glow B — Env bloom | HDR 2D (`viewport/hdr_2d`) + WorldEnvironment glow on HDR neon colors |
-| Shared neon aura | Additive Line2D/Polygon2D aura always on so glow is visible in both modes |
+| Glow A — Halo shells | Tight additive Line2D rings with rapid exponential falloff (tube neon) |
+| Glow B — Env bloom | HDR 2D + mild fine-level bloom (levels 1–3 only; high threshold) |
+| Shared neon core | Bright core ring + short fringe on puck/mallets/walls (no wide fill wash) |
 
 Procedural Godot-native drawing only for this PoC (no Recraft/Fal/imported entity textures). Not a standing project-wide art rule.
 
@@ -78,17 +78,17 @@ Gravity 0; same collision setup. Aesthetics layers on top only.
 
 | ID | Approach | How to select | Tune |
 |----|----------|---------------|------|
-| G0 | Halo shells (additive rings + aura) | Left panel → Neon glow → **Halo shells** | intensity, saturation |
-| G1 | WorldEnvironment bloom (HDR 2D) | Left panel → Neon glow → **Env bloom** | intensity, saturation |
+| G0 | Halo shells (tight ring falloff) | Left panel → Neon glow → **Halo shells** | intensity, saturation |
+| G1 | Focused env bloom (HDR 2D) | Left panel → Neon glow → **Env bloom** | intensity, saturation |
 
 ## What was tried
 
 - Copied PoC 1 scene/scripts; locked arena constants and preferred physics defaults.
 - Added deep space ColorRect + two starfield implementations and two glow implementations with a left-side aesthetics panel.
 - Headless smoke: `godot --headless --path pocs/space-neon-aesthetics-on-physics --quit-after 180` (no script errors).
-- First pass was too subtle (low-alpha non-additive shells; bloom without `hdr_2d`). Strengthened: additive aura always on, HDR neon colors, brighter wall/table glow lines, default intensity 0.9.
-- Glow z-order bug: child `z_index < 0` is absolute under opaque `TableFill`, so auras drew in the margins behind the arena. Fixed by keeping glow z ≥ 0 and stacking puck/mallet/walls above the table.
-- **Readable duel: holds** if intensity stays mid–high; crank bloom to 1.0 only if you want a wash.
+- First pass too subtle; second too intense/diffuse (filled additive blobs + wide lines + heavy bloom). Tuned to tube neon: bright core Line2D + 2–3 rings with exponential alpha/width falloff; bloom uses fine levels only.
+- Glow z-order: keep glow z ≥ 0 and stack play pieces above `TableFill`.
+- **Readable duel: holds** — focused neon at default intensity (~0.7); raise intensity for hotter core without growing a fog.
 
 ### Keep / adapt (aesthetics / view) — draft for reconcile
 
