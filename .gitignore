@@ -16,3 +16,6 @@ agent-orc/src/*.egg-info/
 
 # local probes / scratch
 tmp/
+
+# Godot editor/import cache (PoCs and future main project)
+.godot/
