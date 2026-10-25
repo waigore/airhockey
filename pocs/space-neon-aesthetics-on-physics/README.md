@@ -26,8 +26,9 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 | Faint starfield (selectable) | Static `_draw()` dots **or** CPUParticles2D twinkle |
 | Neon arena / walls | Polygon2D fills + Line2D neon edge / wall rims |
 | Neon puck & mallets | Polygon2D disks + selectable glow treatment |
-| Glow A — Halo shells | Concentric translucent Polygon2D rings + wall Line2D rims |
-| Glow B — Env bloom | WorldEnvironment glow/bloom on neon colors |
+| Glow A — Halo shells | Additive Polygon2D shells + soft aura/rings on puck/mallets/walls |
+| Glow B — Env bloom | HDR 2D (`viewport/hdr_2d`) + WorldEnvironment glow on HDR neon colors |
+| Shared neon aura | Additive Line2D/Polygon2D aura always on so glow is visible in both modes |
 
 Procedural Godot-native drawing only for this PoC (no Recraft/Fal/imported entity textures). Not a standing project-wide art rule.
 
@@ -77,15 +78,15 @@ Gravity 0; same collision setup. Aesthetics layers on top only.
 
 | ID | Approach | How to select | Tune |
 |----|----------|---------------|------|
-| G0 | Halo shells (Polygon2D rings + wall rims) | Left panel → Neon glow → **Halo shells** | intensity, saturation |
-| G1 | WorldEnvironment bloom | Left panel → Neon glow → **Env bloom** | intensity, saturation |
+| G0 | Halo shells (additive rings + aura) | Left panel → Neon glow → **Halo shells** | intensity, saturation |
+| G1 | WorldEnvironment bloom (HDR 2D) | Left panel → Neon glow → **Env bloom** | intensity, saturation |
 
 ## What was tried
 
 - Copied PoC 1 scene/scripts; locked arena constants and preferred physics defaults.
 - Added deep space ColorRect + two starfield implementations and two glow implementations with a left-side aesthetics panel.
 - Headless smoke: `godot --headless --path pocs/space-neon-aesthetics-on-physics --quit-after 180` (no script errors).
-- Interactive judgment: faint stars stay behind the table; neon edges/halos or bloom make arena/puck/mallets read as lit without hiding silhouette contrast. **Readable duel: holds** under both glow modes at default intensity (~0.7); very high bloom can wash highlights — dial intensity down if needed.
+- First pass was too subtle (low-alpha non-additive shells; bloom without `hdr_2d`). Strengthened: additive aura always on, HDR neon colors, brighter wall/table glow lines, default intensity 0.9. **Readable duel: holds** if intensity stays mid–high; crank bloom to 1.0 only if you want a wash.
 
 ### Keep / adapt (aesthetics / view) — draft for reconcile
 
