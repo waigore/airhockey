@@ -13,5 +13,5 @@ Each open request should become a GitHub task or epic before build. Status `file
 - **Desired outcome**: Keep/adapt list for aesthetics/view; confirm readable duel under neon/space look; PO-chosen glow and starfield approach from alternatives shipped in the PoC.
 - **Trigger**: user-requested
 - **Related**: `specs/vision.md`; `docs/requirements/aesthetics.md`; `docs/requirements/view.md`; depends on `physics-feel-live-tunables`
-- **Status**: filed
+- **Status**: built — `pocs/space-neon-aesthetics-on-physics/` (Godot-native starfield ×2 + neon glow ×2 on PoC 1 physics/arena baseline; awaiting verification/acceptance)
 - **Issue**: #4
