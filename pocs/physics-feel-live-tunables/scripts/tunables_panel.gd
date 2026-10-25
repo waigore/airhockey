@@ -2,6 +2,8 @@ extends PanelContainer
 
 ## Debug UI: sliders that push into PoCTunables immediately.
 
+signal reset_puck_pressed
+
 var tunables: PoCTunables
 var _sliders: Dictionary = {} ## name -> HSlider
 var _value_labels: Dictionary = {}
@@ -46,8 +48,13 @@ func _build_ui() -> void:
 
 	_add_slider(vbox, "wall_bounce", "Wall bounce", 0.0, 1.0, 0.01)
 
+	var reset_btn := Button.new()
+	reset_btn.text = "Reset puck"
+	reset_btn.pressed.connect(func() -> void: reset_puck_pressed.emit())
+	vbox.add_child(reset_btn)
+
 	var hint := Label.new()
-	hint.text = "P1 mouse (left) | P2 WASD/arrows (right) | R reset puck"
+	hint.text = "P1 mouse (left) | P2 WASD/arrows (right) | R reset puck + mallets"
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(hint)
 

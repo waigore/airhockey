@@ -37,6 +37,7 @@ func _ready() -> void:
 	mallet_left.setup(tunables, TABLE)
 	mallet_right.setup(tunables, TABLE)
 	panel.setup(tunables)
+	panel.reset_puck_pressed.connect(_reset_puck)
 
 	_reset_positions()
 
@@ -45,6 +46,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_R:
 			_reset_positions()
+
+
+func _reset_puck() -> void:
+	puck.reset_to(TABLE.get_center())
 
 
 func _reset_positions() -> void:
@@ -57,4 +62,4 @@ func _reset_positions() -> void:
 func _process(_delta: float) -> void:
 	# Soft reclaim if puck leaves far through a goal
 	if not TABLE.grow(80.0).has_point(puck.global_position):
-		_reset_positions()
+		_reset_puck()
