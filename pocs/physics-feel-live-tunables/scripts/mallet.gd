@@ -1,14 +1,15 @@
 extends RigidBody2D
 
-## Mallet: critically damped follow toward mouse/keys (avoids spring jitter).
+## Mallet: velocity follow toward mouse/keys (no spring — avoids jitter/ghosting).
 
 enum ControlMode { MOUSE, KEYS }
 
-const SETTLE_PX := 2.5
-const TARGET_SMOOTH := 28.0 ## higher = snappier cursor tracking, still filtered
+const SETTLE_PX := 3.0
+const TARGET_SMOOTH := 30.0
 
 @export var control_mode: ControlMode = ControlMode.MOUSE
-@export var play_half: String = "left" ## "left" or "right" — clamps target to that half
+@export var play_half: String = "left" ## "left" or "right"
+@export var tint: Color = Color(0.3, 0.75, 1.0, 1.0)
 
 var tunables: PoCTunables
 var _key_target: Vector2 = Vector2.ZERO
@@ -24,18 +25,19 @@ func setup(t: PoCTunables, table: Rect2) -> void:
 	gravity_scale = 0.0
 	lock_rotation = true
 	continuous_cd = RigidBody2D.CCD_MODE_CAST_RAY
-	# Follow damping is applied in the controller; keep engine damp low so it
-	# does not fight the critically damped spring.
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	linear_damp_mode = RigidBody2D.DAMP_MODE_REPLACE
-	var color := Color(0.3, 0.75, 1.0, 1.0) if play_half == "left" else Color(1.0, 0.45, 0.35, 1.0)
-	_ensure_visual(color, 36.0)
+	_ensure_visual(tint, 36.0)
 	_apply()
-	tunables.changed.connect(_apply)
+	if not tunables.changed.is_connected(_apply):
+		tunables.changed.connect(_apply)
 
 
 func _ensure_visual(color: Color, radius: float) -> void:
-	if has_node("Visual"):
-		return
+	# Drop any prior polygons (hot-reload / double-setup) so we never stack disks.
+	for ch in get_children():
+		if ch is Polygon2D:
+			ch.free()
 	var vis := Polygon2D.new()
 	vis.name = "Visual"
 	vis.color = color
@@ -46,6 +48,7 @@ func _ensure_visual(color: Color, radius: float) -> void:
 	vis.polygon = pts
 	add_child(vis)
 	var hub := Polygon2D.new()
+	hub.name = "Hub"
 	hub.color = color.darkened(0.35)
 	var hub_pts := PackedVector2Array()
 	for i in 16:
@@ -59,7 +62,6 @@ func _apply() -> void:
 	if tunables == null:
 		return
 	mass = tunables.mallet_mass
-	# Engine linear damp kept near-zero; tunable damp feeds the controller.
 	linear_damp = 0.0
 	var mat := PhysicsMaterial.new()
 	mat.bounce = 0.15
@@ -80,19 +82,20 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 		return
 	var to_t := _follow_target - state.transform.origin
 	var dist := to_t.length()
-	var k := tunables.mallet_drive
-	# Critical damping for spring-mass: c = 2*sqrt(k*m), plus tunable extra.
-	var c := 2.0 * sqrt(maxf(k * mass, 0.0001)) + tunables.mallet_linear_damp * 40.0
 	if dist < SETTLE_PX:
-		# Brake only — kills orbit/jitter when the cursor is on the mallet.
-		state.linear_velocity = state.linear_velocity.move_toward(Vector2.ZERO, c * state.step / maxf(mass, 0.001))
+		state.linear_velocity = Vector2.ZERO
 		return
-	var force := to_t * k - state.linear_velocity * c
-	state.apply_central_force(force)
-	var v := state.linear_velocity
+	# Drive = follow gain (1/s). Desired velocity toward target, hard-assigned
+	# so the controller cannot spring-oscillate into a double image.
+	var gain := tunables.mallet_drive / 200.0 ## 3200 → ~16 /s
+	gain = maxf(gain, 1.0)
+	var desired := to_t * gain
 	var max_s := tunables.mallet_max_speed
-	if v.length() > max_s:
-		state.linear_velocity = v.normalized() * max_s
+	if desired.length() > max_s:
+		desired = desired.normalized() * max_s
+	# Extra tunable damp blends toward desired (1 = instant).
+	var blend := 1.0 - exp(-(12.0 + tunables.mallet_linear_damp) * state.step)
+	state.linear_velocity = state.linear_velocity.lerp(desired, blend)
 
 
 func _resolve_raw_target() -> Vector2:
