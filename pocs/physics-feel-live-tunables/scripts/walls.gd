@@ -1,6 +1,6 @@
 extends Node2D
 
-## Static table walls with live bounce. Goal gaps on the short (left/right) ends.
+## Static table walls with live bounce. Goal gaps on the short (top/bottom) ends.
 ## Segments are non-overlapping so a corner hit is one contact (not two that cancel speed).
 
 var tunables: PoCTunables
@@ -23,17 +23,17 @@ func _build(table: Rect2, th: float, goal_w: float) -> void:
 	var y0 := table.position.y
 	var w := table.size.x
 	var h := table.size.y
-	var mid_y := y0 + h * 0.5
+	var mid_x := x0 + w * 0.5
 	var half_goal := goal_w * 0.5
-	# Top/bottom: table width only (do not overlap side rails).
-	_add_rect(Vector2(x0 + w * 0.5, y0 - th * 0.5), Vector2(w, th))
-	_add_rect(Vector2(x0 + w * 0.5, y0 + h + th * 0.5), Vector2(w, th))
-	# Left/right: two segments around the goal, flush with the table y-range.
-	var seg_h := (h - goal_w) * 0.5
-	_add_rect(Vector2(x0 - th * 0.5, mid_y - half_goal - seg_h * 0.5), Vector2(th, seg_h))
-	_add_rect(Vector2(x0 - th * 0.5, mid_y + half_goal + seg_h * 0.5), Vector2(th, seg_h))
-	_add_rect(Vector2(x0 + w + th * 0.5, mid_y - half_goal - seg_h * 0.5), Vector2(th, seg_h))
-	_add_rect(Vector2(x0 + w + th * 0.5, mid_y + half_goal + seg_h * 0.5), Vector2(th, seg_h))
+	# Left/right: full table height (do not overlap top/bottom goal rails).
+	_add_rect(Vector2(x0 - th * 0.5, y0 + h * 0.5), Vector2(th, h))
+	_add_rect(Vector2(x0 + w + th * 0.5, y0 + h * 0.5), Vector2(th, h))
+	# Top/bottom: two segments around the goal, flush with the table x-range.
+	var seg_w := (w - goal_w) * 0.5
+	_add_rect(Vector2(mid_x - half_goal - seg_w * 0.5, y0 - th * 0.5), Vector2(seg_w, th))
+	_add_rect(Vector2(mid_x + half_goal + seg_w * 0.5, y0 - th * 0.5), Vector2(seg_w, th))
+	_add_rect(Vector2(mid_x - half_goal - seg_w * 0.5, y0 + h + th * 0.5), Vector2(seg_w, th))
+	_add_rect(Vector2(mid_x + half_goal + seg_w * 0.5, y0 + h + th * 0.5), Vector2(seg_w, th))
 
 
 func _add_rect(center: Vector2, size: Vector2) -> void:

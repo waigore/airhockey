@@ -8,7 +8,7 @@ const SETTLE_PX := 3.0
 const TARGET_SMOOTH := 30.0
 
 @export var control_mode: ControlMode = ControlMode.MOUSE
-@export var play_half: String = "left" ## "left" or "right"
+@export var play_half: String = "bottom" ## "bottom" (P1) or "top" (P2)
 @export var tint: Color = Color(0.3, 0.75, 1.0, 1.0)
 
 var tunables: PoCTunables
@@ -133,16 +133,16 @@ func snap_to(pos: Vector2) -> void:
 
 func _clamp_to_half(p: Vector2) -> Vector2:
 	var r := _table_rect
-	var mid_x := r.position.x + r.size.x * 0.5
+	var mid_y := r.position.y + r.size.y * 0.5
 	var margin := 28.0
-	var min_x: float
-	var max_x: float
-	if play_half == "left":
-		min_x = r.position.x + margin
-		max_x = mid_x - 4.0
+	var min_x := r.position.x + margin
+	var max_x := r.position.x + r.size.x - margin
+	var min_y: float
+	var max_y: float
+	if play_half == "bottom":
+		min_y = mid_y + 4.0
+		max_y = r.position.y + r.size.y - margin
 	else:
-		min_x = mid_x + 4.0
-		max_x = r.position.x + r.size.x - margin
-	var min_y := r.position.y + margin
-	var max_y := r.position.y + r.size.y - margin
+		min_y = r.position.y + margin
+		max_y = mid_y - 4.0
 	return Vector2(clampf(p.x, min_x, max_x), clampf(p.y, min_y, max_y))

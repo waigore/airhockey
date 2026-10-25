@@ -1,8 +1,8 @@
 extends Node2D
 
-## PoC root: table, walls/goals, two mallets, puck, live tunables panel.
+## PoC root: portrait table, goals top/bottom, P1 bottom, live tunables panel.
 
-const TABLE := Rect2(160, 80, 960, 560)
+const TABLE := Rect2(400, 40, 480, 640)
 const WALL_THICKNESS := 24.0
 const GOAL_WIDTH := 160.0
 
@@ -10,8 +10,8 @@ var tunables := PoCTunables.new()
 
 @onready var walls: Node2D = $Walls
 @onready var puck: RigidBody2D = $Puck
-@onready var mallet_left: RigidBody2D = $MalletLeft
-@onready var mallet_right: RigidBody2D = $MalletRight
+@onready var mallet_bottom: RigidBody2D = $MalletBottom
+@onready var mallet_top: RigidBody2D = $MalletTop
 @onready var panel: PanelContainer = $CanvasLayer/TunablesPanel
 @onready var table_fill: Polygon2D = $TableFill
 
@@ -24,18 +24,18 @@ func _ready() -> void:
 	])
 	table_fill.color = Color(0.08, 0.12, 0.18, 1.0)
 
-	# Configure sides in code so scene export drift cannot stack two left/blue mallets.
-	mallet_left.control_mode = 0 ## MOUSE
-	mallet_left.play_half = "left"
-	mallet_left.tint = Color(0.3, 0.75, 1.0, 1.0)
-	mallet_right.control_mode = 1 ## KEYS
-	mallet_right.play_half = "right"
-	mallet_right.tint = Color(1.0, 0.45, 0.35, 1.0)
+	# P1 bottom (mouse), P2 top (keys).
+	mallet_bottom.control_mode = 0 ## MOUSE
+	mallet_bottom.play_half = "bottom"
+	mallet_bottom.tint = Color(0.3, 0.75, 1.0, 1.0)
+	mallet_top.control_mode = 1 ## KEYS
+	mallet_top.play_half = "top"
+	mallet_top.tint = Color(1.0, 0.45, 0.35, 1.0)
 
 	walls.setup(tunables, TABLE, WALL_THICKNESS, GOAL_WIDTH)
 	puck.setup(tunables)
-	mallet_left.setup(tunables, TABLE)
-	mallet_right.setup(tunables, TABLE)
+	mallet_bottom.setup(tunables, TABLE)
+	mallet_top.setup(tunables, TABLE)
 	panel.setup(tunables)
 	panel.reset_puck_pressed.connect(_reset_puck)
 
@@ -55,8 +55,8 @@ func _reset_puck() -> void:
 func _reset_positions() -> void:
 	var mid := TABLE.get_center()
 	puck.reset_to(mid)
-	mallet_left.snap_to(Vector2(TABLE.position.x + TABLE.size.x * 0.25, mid.y))
-	mallet_right.snap_to(Vector2(TABLE.position.x + TABLE.size.x * 0.75, mid.y))
+	mallet_bottom.snap_to(Vector2(mid.x, TABLE.position.y + TABLE.size.y * 0.75))
+	mallet_top.snap_to(Vector2(mid.x, TABLE.position.y + TABLE.size.y * 0.25))
 
 
 func _process(_delta: float) -> void:

@@ -54,7 +54,7 @@ func _build_ui() -> void:
 	vbox.add_child(reset_btn)
 
 	var hint := Label.new()
-	hint.text = "P1 mouse (left) | P2 WASD/arrows (right) | R reset puck + mallets"
+	hint.text = "P1 mouse (bottom) | P2 WASD/arrows (top) | R reset puck + mallets"
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(hint)
 
