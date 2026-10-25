@@ -9,10 +9,10 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_puck"]
 radius = 18.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_l"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_b"]
 radius = 36.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_r"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_t"]
 radius = 36.0
 
 [node name="Main" type="Node2D"]
@@ -35,7 +35,7 @@ script = ExtResource("3_puck")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Puck"]
 shape = SubResource("CircleShape2D_puck")
 
-[node name="MalletLeft" type="RigidBody2D" parent="."]
+[node name="MalletBottom" type="RigidBody2D" parent="."]
 collision_layer = 4
 collision_mask = 7
 mass = 2.0
@@ -43,13 +43,13 @@ gravity_scale = 0.0
 lock_rotation = true
 script = ExtResource("4_mallet")
 control_mode = 0
-play_half = "left"
+play_half = "bottom"
 tint = Color(0.3, 0.75, 1, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletLeft"]
-shape = SubResource("CircleShape2D_mallet_l")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletBottom"]
+shape = SubResource("CircleShape2D_mallet_b")
 
-[node name="MalletRight" type="RigidBody2D" parent="."]
+[node name="MalletTop" type="RigidBody2D" parent="."]
 collision_layer = 4
 collision_mask = 7
 mass = 2.0
@@ -57,11 +57,11 @@ gravity_scale = 0.0
 lock_rotation = true
 script = ExtResource("4_mallet")
 control_mode = 1
-play_half = "right"
+play_half = "top"
 tint = Color(1, 0.45, 0.35, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletRight"]
-shape = SubResource("CircleShape2D_mallet_r")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletTop"]
+shape = SubResource("CircleShape2D_mallet_t")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

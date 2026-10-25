@@ -75,8 +75,8 @@ Act: incomplete
 godot --path pocs/physics-feel-live-tunables
 ```
 
-- **P1 (left, cyan)**: mouse
-- **P2 (right, coral)**: WASD or arrow keys
+- **P1 (bottom, cyan)**: mouse
+- **P2 (top, coral)**: WASD or arrow keys
 - **Reset puck** (panel button): puck to center, velocity cleared
 - **R**: reset puck + mallets
 - Right-side panel: drag sliders; feel updates without restart
