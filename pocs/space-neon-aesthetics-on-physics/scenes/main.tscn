@@ -1,0 +1,108 @@
+[gd_scene load_steps=12 format=3 uid="uid://pocspaceneonaesthetics"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/walls.gd" id="2_walls"]
+[ext_resource type="Script" path="res://scripts/puck.gd" id="3_puck"]
+[ext_resource type="Script" path="res://scripts/mallet.gd" id="4_mallet"]
+[ext_resource type="Script" path="res://scripts/tunables_panel.gd" id="5_panel"]
+[ext_resource type="Script" path="res://scripts/starfield.gd" id="6_star"]
+[ext_resource type="Script" path="res://scripts/aesthetics.gd" id="7_aes"]
+[ext_resource type="Script" path="res://scripts/aesthetics_panel.gd" id="8_aesp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_puck"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_b"]
+radius = 36.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet_t"]
+radius = 36.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="BgLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="SpaceBackground" type="ColorRect" parent="BgLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.03, 0.07, 1)
+
+[node name="Starfield" type="Node2D" parent="."]
+z_index = -10
+script = ExtResource("6_star")
+
+[node name="TableFill" type="Polygon2D" parent="."]
+color = Color(0.04, 0.06, 0.12, 0.92)
+
+[node name="Aesthetics" type="Node2D" parent="."]
+script = ExtResource("7_aes")
+
+[node name="Walls" type="Node2D" parent="."]
+script = ExtResource("2_walls")
+
+[node name="Puck" type="RigidBody2D" parent="."]
+collision_layer = 2
+collision_mask = 5
+mass = 0.35
+gravity_scale = 0.0
+lock_rotation = true
+script = ExtResource("3_puck")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puck"]
+shape = SubResource("CircleShape2D_puck")
+
+[node name="MalletBottom" type="RigidBody2D" parent="."]
+collision_layer = 4
+collision_mask = 7
+mass = 1.55
+gravity_scale = 0.0
+lock_rotation = true
+script = ExtResource("4_mallet")
+control_mode = 0
+play_half = "bottom"
+tint = Color(0.25, 0.85, 1, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletBottom"]
+shape = SubResource("CircleShape2D_mallet_b")
+
+[node name="MalletTop" type="RigidBody2D" parent="."]
+collision_layer = 4
+collision_mask = 7
+mass = 1.55
+gravity_scale = 0.0
+lock_rotation = true
+script = ExtResource("4_mallet")
+control_mode = 1
+play_half = "top"
+tint = Color(1, 0.4, 0.55, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletTop"]
+shape = SubResource("CircleShape2D_mallet_t")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="AestheticsPanel" type="PanelContainer" parent="CanvasLayer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 400.0
+offset_bottom = 320.0
+script = ExtResource("8_aesp")
+
+[node name="TunablesPanel" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 420.0
+grow_horizontal = 0
+script = ExtResource("5_panel")

@@ -1,0 +1,38 @@
+; Engine PoC — space neon aesthetics on physics base (issue #4). Not main-tree code.
+; Engine: Godot 4.7.x / GDScript (ADR-0001).
+; Physics/arena baseline matches pocs/physics-feel-live-tunables (PoC 1).
+
+config_version=5
+
+[application]
+
+config/name="PoC Space Neon Aesthetics On Physics"
+config/description="Engine PoC: faint starfield + neon glow on proven physics feel (gravity 0)."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "Forward Plus")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[layer_names]
+
+2d_physics/layer_1="table"
+2d_physics/layer_2="puck"
+2d_physics/layer_3="mallet"
+
+[physics]
+
+2d/default_gravity=0.0
+2d/default_gravity_vector=Vector2(0, 0)
+2d/default_linear_damp=0.0
+2d/default_angular_damp=0.0
+# Higher tick rate reduces deep wall penetration at high puck speeds (energy loss on resolve).
+common/physics_ticks_per_second=120
+common/max_physics_steps_per_frame=16
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
