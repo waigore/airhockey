@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3 uid="uid://pocphysicsfeelmain"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/walls.gd" id="2_walls"]
+[ext_resource type="Script" path="res://scripts/puck.gd" id="3_puck"]
+[ext_resource type="Script" path="res://scripts/mallet.gd" id="4_mallet"]
+[ext_resource type="Script" path="res://scripts/tunables_panel.gd" id="5_panel"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_puck"]
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mallet"]
+radius = 36.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="TableFill" type="Polygon2D" parent="."]
+color = Color(0.08, 0.12, 0.18, 1)
+
+[node name="Walls" type="Node2D" parent="."]
+script = ExtResource("2_walls")
+
+[node name="Puck" type="RigidBody2D" parent="."]
+collision_layer = 2
+collision_mask = 5
+mass = 0.35
+gravity_scale = 0.0
+lock_rotation = true
+script = ExtResource("3_puck")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Puck"]
+shape = SubResource("CircleShape2D_puck")
+
+[node name="MalletLeft" type="RigidBody2D" parent="."]
+collision_layer = 4
+collision_mask = 7
+mass = 2.0
+gravity_scale = 0.0
+lock_rotation = true
+script = ExtResource("4_mallet")
+control_mode = 0
+play_half = "left"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletLeft"]
+shape = SubResource("CircleShape2D_mallet")
+
+[node name="MalletRight" type="RigidBody2D" parent="."]
+collision_layer = 4
+collision_mask = 7
+mass = 2.0
+gravity_scale = 0.0
+lock_rotation = true
+script = ExtResource("4_mallet")
+control_mode = 1
+play_half = "right"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MalletRight"]
+shape = SubResource("CircleShape2D_mallet")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TunablesPanel" type="PanelContainer" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 420.0
+grow_horizontal = 0
+script = ExtResource("5_panel")
