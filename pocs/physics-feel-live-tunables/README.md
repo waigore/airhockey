@@ -86,5 +86,5 @@ godot --path pocs/physics-feel-live-tunables
 - No scoring UI; puck soft-resets if it leaves far past a goal.
 - Shared mallet tunables (not per-side).
 - No spin / angular damp / goal suction (out of scope).
-- Puck flight bleed is explicit from **Puck linear damp** only (`0` = no damp bleed). Wall/mallet restitution is custom on the puck so solver soft-contacts are not mistaken for damp.
+- Puck flight bleed is explicit from **Puck linear damp** only (`0` = no damp bleed). Wall/mallet bounce use physics materials again (custom contact bounce was killing rebounds).
 - Main tree must not import from `pocs/`.
