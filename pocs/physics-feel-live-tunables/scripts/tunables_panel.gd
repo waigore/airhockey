@@ -38,7 +38,7 @@ func _build_ui() -> void:
 
 	_add_slider(vbox, "puck_mass", "Puck mass", 0.05, 2.0, 0.01)
 	_add_slider(vbox, "puck_bounce", "Puck bounce", 0.0, 1.0, 0.01)
-	_add_slider(vbox, "puck_linear_damp", "Puck linear damp", 0.0, 4.0, 0.01)
+	_add_slider(vbox, "puck_linear_damp", "Puck linear damp", 0.0, 4.0, 0.01) ## 0 = no flight bleed
 	_add_slider(vbox, "puck_max_speed", "Puck max speed", 200.0, 3000.0, 10.0)
 
 	_add_slider(vbox, "mallet_mass", "Mallet mass", 0.2, 8.0, 0.05)

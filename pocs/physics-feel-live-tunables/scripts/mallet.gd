@@ -64,8 +64,10 @@ func _apply() -> void:
 	mass = tunables.mallet_mass
 	linear_damp = 0.0
 	var mat := PhysicsMaterial.new()
-	mat.bounce = 0.15
-	mat.friction = 0.02
+	# Puck applies custom restitution; mallet face stays 0-bounce here.
+	mat.bounce = 0.0
+	mat.friction = 0.0
+	mat.absorbent = false
 	physics_material_override = mat
 
 

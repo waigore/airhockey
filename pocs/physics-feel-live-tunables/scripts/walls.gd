@@ -59,8 +59,10 @@ func _add_rect(center: Vector2, size: Vector2) -> void:
 func _apply() -> void:
 	if tunables == null:
 		return
+	# Bounce is applied on the puck (custom restitution). Keep wall materials at 0
+	# so the solver does not double-apply or soft-bleed into "fake damp".
 	var mat := PhysicsMaterial.new()
-	mat.bounce = tunables.wall_bounce
+	mat.bounce = 0.0
 	mat.friction = 0.0
 	mat.absorbent = false
 	for b in _bodies:
