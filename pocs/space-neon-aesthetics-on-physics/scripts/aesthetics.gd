@@ -24,6 +24,8 @@ var _env: WorldEnvironment
 var _table_fill: Polygon2D
 var _table_edge: Line2D
 var _table_glow: Line2D
+var _frame_edge: Line2D
+var _frame_glow: Line2D
 var _center_line: Line2D
 var _walls: Node2D
 var _puck: RigidBody2D
@@ -78,41 +80,76 @@ func setup(
 
 func _ensure_table_lines() -> void:
 	if _table_edge == null or not is_instance_valid(_table_edge):
-		_table_edge = Line2D.new()
-		_table_edge.name = "TableNeonEdge"
-		_table_edge.width = 2.0
-		_table_edge.default_color = WALL_NEON
-		_table_edge.z_index = 2
-		_table_edge.antialiased = true
-		add_child(_table_edge)
+		_table_edge = _make_line("TableNeonEdge", 2.0, WALL_NEON, 3, false)
 	if _table_glow == null or not is_instance_valid(_table_glow):
-		_table_glow = Line2D.new()
-		_table_glow.name = "TableNeonGlow"
-		_table_glow.width = 5.0
-		_table_glow.default_color = Color(WALL_NEON.r, WALL_NEON.g, WALL_NEON.b, 0.35)
-		_table_glow.z_index = 1
-		_table_glow.antialiased = true
-		_table_glow.material = _add_mat
-		add_child(_table_glow)
+		_table_glow = _make_line("TableNeonGlow", 5.0, Color(WALL_NEON.r, WALL_NEON.g, WALL_NEON.b, 0.35), 2, true)
+	if _frame_edge == null or not is_instance_valid(_frame_edge):
+		_frame_edge = _make_line("FrameNeonEdge", 2.0, WALL_NEON, 5, false)
+	if _frame_glow == null or not is_instance_valid(_frame_glow):
+		_frame_glow = _make_line("FrameNeonGlow", 5.0, Color(WALL_NEON.r, WALL_NEON.g, WALL_NEON.b, 0.35), 4, true)
 	if _center_line == null or not is_instance_valid(_center_line):
-		_center_line = Line2D.new()
-		_center_line.name = "CenterNeonLine"
-		_center_line.width = 1.5
-		_center_line.default_color = Color(0.4, 1.1, 1.4, 0.4)
-		_center_line.z_index = 2
-		_center_line.antialiased = true
-		_center_line.material = _add_mat
-		add_child(_center_line)
+		_center_line = _make_line("CenterNeonLine", 1.5, Color(0.4, 1.1, 1.4, 0.4), 3, true)
+
 	var p := _table.position
 	var s := _table.size
-	var loop := PackedVector2Array([
+	var inner := PackedVector2Array([
 		p, p + Vector2(s.x, 0), p + s, p + Vector2(0, s.y), p
 	])
-	_table_edge.points = loop
-	_table_glow.points = loop
+	_table_edge.points = inner
+	_table_glow.points = inner
+	var frame := _outer_frame_points(_table, _wall_thickness, _goal_width)
+	_frame_edge.points = frame
+	_frame_glow.points = frame
 	var mid_y := p.y + s.y * 0.5
 	_center_line.points = PackedVector2Array([
 		Vector2(p.x + 8.0, mid_y), Vector2(p.x + s.x - 8.0, mid_y)
+	])
+
+
+func _make_line(line_name: String, width: float, color: Color, z: int, additive: bool) -> Line2D:
+	var line := Line2D.new()
+	line.name = line_name
+	line.width = width
+	line.default_color = color
+	line.z_index = z
+	line.antialiased = true
+	line.joint_mode = Line2D.LINE_JOINT_ROUND
+	line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	if additive:
+		line.material = _add_mat
+	add_child(line)
+	return line
+
+
+func _outer_frame_points(table: Rect2, th: float, goal_w: float) -> PackedVector2Array:
+	## Continuous outer wall silhouette with goal notches — no per-segment seams.
+	var x0 := table.position.x
+	var y0 := table.position.y
+	var x1 := x0 + table.size.x
+	var y1 := y0 + table.size.y
+	var mid := x0 + table.size.x * 0.5
+	var gl := mid - goal_w * 0.5
+	var gr := mid + goal_w * 0.5
+	var ox0 := x0 - th
+	var oy0 := y0 - th
+	var ox1 := x1 + th
+	var oy1 := y1 + th
+	# Clockwise from outer top-left, dipping in at goal mouths.
+	return PackedVector2Array([
+		Vector2(ox0, oy0),
+		Vector2(gl, oy0),
+		Vector2(gl, y0),
+		Vector2(gr, y0),
+		Vector2(gr, oy0),
+		Vector2(ox1, oy0),
+		Vector2(ox1, oy1),
+		Vector2(gr, oy1),
+		Vector2(gr, y1),
+		Vector2(gl, y1),
+		Vector2(gl, oy1),
+		Vector2(ox0, oy1),
+		Vector2(ox0, oy0),
 	])
 
 
@@ -140,15 +177,23 @@ func _apply() -> void:
 
 	if _table_fill != null:
 		_table_fill.color = TABLE_BASE
+	var core_w := 1.5 + intensity * 1.5
+	var fringe_w := 3.5 + intensity * 5.0
+	var fringe_a := 0.18 + intensity * 0.28
 	if _table_edge != null:
-		# Bright tube core.
 		_table_edge.default_color = Color(wall_c.r, wall_c.g, wall_c.b, 1.0)
-		_table_edge.width = 1.5 + intensity * 1.5
+		_table_edge.width = core_w
 	if _table_glow != null:
-		# Short outer fade only (not a wide wash).
-		_table_glow.default_color = Color(wall_c.r, wall_c.g, wall_c.b, 0.18 + intensity * 0.28)
-		_table_glow.width = 3.5 + intensity * 5.0
+		_table_glow.default_color = Color(wall_c.r, wall_c.g, wall_c.b, fringe_a)
+		_table_glow.width = fringe_w
 		_table_glow.visible = true
+	if _frame_edge != null:
+		_frame_edge.default_color = Color(wall_c.r, wall_c.g, wall_c.b, 1.0)
+		_frame_edge.width = core_w
+	if _frame_glow != null:
+		_frame_glow.default_color = Color(wall_c.r, wall_c.g, wall_c.b, fringe_a)
+		_frame_glow.width = fringe_w
+		_frame_glow.visible = true
 	if _center_line != null:
 		_center_line.default_color = Color(wall_c.r, wall_c.g, wall_c.b, 0.25 + intensity * 0.3)
 		_center_line.width = 1.0 + intensity * 1.0
@@ -173,52 +218,21 @@ func _sat_color(c: Color, sat: float) -> Color:
 
 
 func _tint_walls(neon: Color) -> void:
+	## Fill only — neon outline is the continuous frame Line2D (avoids corner seams).
 	if _walls == null:
 		return
 	var intensity := tunables.glow_intensity
 	for body in _walls.get_children():
-		var to_free: Array[Node] = []
-		var poly_pts := PackedVector2Array()
 		for ch in body.get_children():
 			if ch is Line2D and str(ch.name).begins_with("Neon"):
-				to_free.append(ch)
+				ch.free() ## leftover from older rim approach
 			elif ch is Polygon2D:
-				# Dimmer rail body; neon lives in the rim/glow lines.
 				(ch as Polygon2D).color = Color(
-					neon.r * (0.25 + intensity * 0.2),
-					neon.g * (0.25 + intensity * 0.2),
-					neon.b * (0.25 + intensity * 0.2),
+					neon.r * (0.22 + intensity * 0.18),
+					neon.g * (0.22 + intensity * 0.18),
+					neon.b * (0.22 + intensity * 0.18),
 					1.0
 				)
-				poly_pts = (ch as Polygon2D).polygon
-		for n in to_free:
-			n.free()
-		if poly_pts.size() < 3:
-			continue
-		var pts := PackedVector2Array()
-		for v in poly_pts:
-			pts.append(v)
-		pts.append(poly_pts[0])
-
-		# Tight additive fringe, then bright core rim on top.
-		var glow := Line2D.new()
-		glow.name = "NeonGlow"
-		glow.width = 3.0 + intensity * 5.0
-		glow.default_color = Color(neon.r, neon.g, neon.b, 0.15 + intensity * 0.3)
-		glow.z_index = 1
-		glow.antialiased = true
-		glow.material = _add_mat
-		glow.points = pts
-		body.add_child(glow)
-
-		var rim := Line2D.new()
-		rim.name = "NeonRim"
-		rim.width = 1.25 + intensity * 1.5
-		rim.default_color = Color(neon.r, neon.g, neon.b, 0.95)
-		rim.z_index = 2
-		rim.antialiased = true
-		rim.points = pts
-		body.add_child(rim)
 
 
 func _style_disk(body: RigidBody2D, color: Color, radius: float) -> void:

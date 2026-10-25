@@ -2,9 +2,10 @@ extends Node2D
 
 ## PoC root: PoC 1 physics/arena baseline + selectable starfield/neon aesthetics.
 
-# Portrait playfield ~2:1 length:width — locked to PoC 1 (do not retune/resize).
+# Portrait playfield ~2:1 — TABLE / GOAL locked to PoC 1.
+# WALL_THICKNESS thinned for this aesthetics PoC (PO: thinner rails); keep collision = visual.
 const TABLE := Rect2(250, 8, 360, 704)
-const WALL_THICKNESS := 24.0
+const WALL_THICKNESS := 12.0
 const GOAL_WIDTH := 130.0
 
 var tunables := PoCTunables.new()
