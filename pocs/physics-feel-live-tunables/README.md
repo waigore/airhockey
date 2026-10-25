@@ -54,8 +54,8 @@ Exploration artifact, not production code. Contract: `docs/pocs.md`, `docs/poc-s
 | puck_max_speed | 2290 |
 | mallet_mass | 1.55 |
 | mallet_max_speed | 1440 |
-| mallet_drive | 10300 |
-| mallet_linear_damp | 16.8 |
+| mallet_drive | 12000 |
+| mallet_linear_damp | 15.7 |
 | wall_bounce | 1.0 |
 
 ## Promotion act

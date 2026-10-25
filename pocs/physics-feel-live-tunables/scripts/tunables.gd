@@ -12,8 +12,8 @@ var puck_max_speed: float = 2290.0
 
 var mallet_mass: float = 1.55
 var mallet_max_speed: float = 1440.0
-var mallet_drive: float = 10300.0 ## follow gain (mapped in mallet controller)
-var mallet_linear_damp: float = 16.8 ## extra follow damping (not engine linear_damp)
+var mallet_drive: float = 12000.0 ## follow gain (mapped in mallet controller)
+var mallet_linear_damp: float = 15.7 ## extra follow damping (not engine linear_damp)
 
 var wall_bounce: float = 1.0
 
